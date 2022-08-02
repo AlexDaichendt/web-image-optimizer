@@ -50,7 +50,13 @@ app.post("/", async (req, res) => {
     } catch (e) {}
   });
   console.log("Finished processing images.");
-  const images = converted.map((conv) => ({ ...conv, href: `/${hash}/${hash}-${conv.width}.${conv.format}` }));
+  const images = converted.map((conv) => {
+    const name = `${hash}-${conv.width}.${conv.format}`;
+    const mimeType = `image/${format}`;
+    const href = `/${hash}/${name}`;
+
+    return { ...conv, href, name, mimeType };
+  });
 
   return res.status(200).json(images);
 });
