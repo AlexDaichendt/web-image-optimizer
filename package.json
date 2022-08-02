@@ -1,0 +1,16 @@
+{
+  "name": "web-image-optimizer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Alex Daichendt",
+  "license": "MIT",
+  "scripts": {
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.1",
+    "express-fileupload": "^1.4.0",
+    "node-image-hash": "^1.1.0",
+    "sharp": "^0.30.7"
+  }
+}
