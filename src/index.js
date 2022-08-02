@@ -52,7 +52,7 @@ app.post("/", async (req, res) => {
   console.log("Finished processing images.");
   const images = converted.map((conv) => {
     const name = `${hash}-${conv.width}.${conv.format}`;
-    const mimeType = `image/${format}`;
+    const mimeType = `image/${conv.format}`;
     const href = `/${hash}/${name}`;
 
     return { ...conv, href, name, mimeType };
