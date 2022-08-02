@@ -4,7 +4,6 @@ const fileUpload = require("express-fileupload");
 const fs = require("fs");
 const imageHash = require("node-image-hash");
 const path = require("path");
-const sharpStream = sharp({ failOn: "none" });
 
 const promises = [];
 
@@ -31,6 +30,7 @@ app.post("/", async (req, res) => {
       return console.error(err);
     }
   });
+  const sharpStream = sharp({ failOn: "none" });
 
   SIZES.forEach((size) => {
     FORMATS.forEach(({ format, options }) => {
