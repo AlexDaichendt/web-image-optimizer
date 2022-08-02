@@ -5,8 +5,6 @@ const fs = require("fs");
 const imageHash = require("node-image-hash");
 const path = require("path");
 
-const promises = [];
-
 const app = express();
 
 app.use(fileUpload());
@@ -30,6 +28,7 @@ app.post("/", async (req, res) => {
       return console.error(err);
     }
   });
+  const promises = [];
   const sharpStream = sharp({ failOn: "none" });
 
   SIZES.forEach((size) => {
