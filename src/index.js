@@ -4,6 +4,7 @@ const fileUpload = require("express-fileupload");
 const fs = require("fs");
 const imageHash = require("node-image-hash");
 const path = require("path");
+const sizeOf = require("image-size");
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.post("/", async (req, res) => {
 
   const thumbBuffer = await sharp(file.data).resize(40).toFormat("jpeg", { quality: 30 }).toBuffer();
   const thumbnail = thumbBuffer.toString("base64");
+  const thumbnailDimensions = sizeOf(file.data);
 
   const converted = await Promise.all(promises).catch((err) => {
     console.error("Error processing files, let's clean it up", err);
@@ -61,7 +63,12 @@ app.post("/", async (req, res) => {
     return { ...conv, href, name, mimeType };
   });
 
-  return res.status(200).json({ images, thumbnail });
+  return res
+    .status(200)
+    .json({
+      images,
+      thumbnail: { value: thumbnail, width: thumbnailDimensions.width, height: thumbnailDimensions.height },
+    });
 });
 
 app.listen(3000);
