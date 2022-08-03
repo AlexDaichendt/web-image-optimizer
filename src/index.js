@@ -43,6 +43,9 @@ app.post("/", async (req, res) => {
   sharp(file.data).pipe(sharpStream);
   console.log("Starting the conversion tasks...");
 
+  const thumbBuffer = await sharp(file.data).resize(40).toFormat("jpeg", { quality: 30 }).toBuffer();
+  const thumbnail = thumbBuffer.toString("base64");
+
   const converted = await Promise.all(promises).catch((err) => {
     console.error("Error processing files, let's clean it up", err);
     try {
@@ -58,7 +61,7 @@ app.post("/", async (req, res) => {
     return { ...conv, href, name, mimeType };
   });
 
-  return res.status(200).json(images);
+  return res.status(200).json({ images, thumbnail });
 });
 
 app.listen(3000);
