@@ -5,6 +5,7 @@ const fs = require("fs");
 const imageHash = require("node-image-hash");
 const path = require("path");
 const sizeOf = require("image-size");
+require("dotenv").config();
 
 const app = express();
 
@@ -15,6 +16,10 @@ const SIZES = [360, 720, 1280, 1920];
 const FORMATS = [{ format: "webp", options: { effort: 6, quality: 75 } }];
 
 app.post("/", async (req, res) => {
+  if (req.headers["x-custom-auth-key"] !== process.env.AUTH_KEY_SECRET) {
+    return res.status(401).send("Unauthorized");
+  }
+
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send("No files were uploaded.");
   }
