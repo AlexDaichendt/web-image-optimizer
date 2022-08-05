@@ -5,7 +5,6 @@ const fs = require("fs");
 const imageHash = require("node-image-hash");
 const path = require("path");
 const sizeOf = require("image-size");
-require("dotenv").config();
 
 const app = express();
 
