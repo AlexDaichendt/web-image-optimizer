@@ -18,8 +18,6 @@ app.post("/", async (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     return res.status(400).send("No files were uploaded.");
   }
-  console.log("Received files:");
-  console.log(req.files);
   let file = req.files.data;
 
   console.log(`Received file: ${file.name} ${file.mimetype}`);
@@ -29,15 +27,19 @@ app.post("/", async (req, res) => {
       return console.error(err);
     }
   });
+
+  const sizes = req.query.sizes ? req.query.sizes.split(",").map((s) => parseInt(s, 10)) : SIZES;
+  const formats = req.query.formats ? JSON.parse(req.query.formats) : FORMATS;
+  console.log(`Using sizes ${sizes}`);
+  console.log(`Using formats ${JSON.stringify(formats)}`);
+
   const promises = [];
   const sharpStream = sharp({ failOn: "none" });
 
-  SIZES.forEach((size) => {
-    FORMATS.forEach(({ format, options }) => {
+  sizes.forEach((size) => {
+    formats.forEach(({ format, options }) => {
       console.log(`Pushed a task into the queue: ${hash}-${size}.${format}`);
-      promises.push(
-        sharpStream.clone().resize(size).toFormat(format, options).toFile(`public/${hash}/${hash}-${size}.${format}`)
-      );
+      promises.push(sharpStream.clone().resize(size).toFormat(format, options).toFile(`public/${hash}/${hash}-${size}.${format}`));
     });
   });
   // pipe the received file into the sharp pipeline
@@ -63,12 +65,10 @@ app.post("/", async (req, res) => {
     return { ...conv, href, name, mimeType };
   });
 
-  return res
-    .status(200)
-    .json({
-      images,
-      thumbnail: { value: thumbnail, width: thumbnailDimensions.width, height: thumbnailDimensions.height },
-    });
+  return res.status(200).json({
+    images,
+    thumbnail: { value: thumbnail, width: thumbnailDimensions.width, height: thumbnailDimensions.height },
+  });
 });
 
 app.listen(3000);
